@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<IProps> = ({ children }) => {
 
       setData({ token: auth.token, user });
 
-      window.location.href = '/dashboard';
+      window.location.href = '/home';
     } catch (error) {
       setLoading(false);
 
