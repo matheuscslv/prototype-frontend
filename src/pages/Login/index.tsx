@@ -1,17 +1,51 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { Form } from '@unform/web';
 
 import {
-  FormGroup, Button,
+  FormGroup, Button, Table,
 } from 'reactstrap';
+
+import Modal from 'react-modal';
 
 import * as Yup from 'yup';
 
 import Input from '../../components/Input';
 import getValidationErrors from '../../utils/getValidationErrors';
 
+interface IUnit {
+  id: string;
+  sigla: string;
+  unidade: string;
+}
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
+// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+// Modal.setAppElement('#yourAppElement');
+
 const Login = () => {
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   const formRef = useRef<any>(null);
+
+  const [units, setUnits] = useState<IUnit[]>([]);
 
   const handleSubmit = useCallback(
     async (data: any) => {
@@ -19,15 +53,15 @@ const Login = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          email: Yup.string().email('E-mail inválido').required('Campo obrigatório'),
-          password: Yup.string().required('Campo obrigatório'),
+          sigla: Yup.string().required('Campo obrigatório'),
+          unidade: Yup.string().required('Campo obrigatório'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        console.log(data);
+        setUnits([...units, { id: Date.now(), ...data }]);
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
@@ -36,34 +70,84 @@ const Login = () => {
         }
       }
     },
-    [],
+    [units],
   );
 
   return (
-    <Form
-      ref={formRef}
-      onSubmit={handleSubmit}
-    >
-      <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
-        <FormGroup>
-          <Input
-            name="email"
-            placeholder="Email"
-            type="text"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            name="password"
-            placeholder="Password"
-            type="password"
-          />
-        </FormGroup>
-        <Button>
-          Submit
-        </Button>
-      </div>
-    </Form>
+    <>
+      <Form
+        ref={formRef}
+        onSubmit={handleSubmit}
+      >
+        <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
+          <FormGroup>
+            <Input
+              name="sigla"
+              placeholder="Sigla"
+              type="text"
+            />
+          </FormGroup>
+          <FormGroup>
+            <Input
+              name="unidade"
+              placeholder="Unidade"
+              type="text"
+            />
+          </FormGroup>
+          <Button>
+            Salvar
+          </Button>
+
+          <Table>
+            <thead>
+              <tr>
+                <th>
+                  id
+                </th>
+                <th>
+                  Sigla
+                </th>
+                <th>
+                  Unidade
+                </th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {units.map((item) => (
+                <tr>
+                  <th scope="row">
+                    {item.id}
+                  </th>
+                  <th>
+                    {item.sigla}
+                  </th>
+                  <td>
+                    {item.unidade}
+                  </td>
+                  <td>
+                    <Button onClick={openModal} type="button">
+                      Adicionar Função
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+
+      </Form>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <button onClick={closeModal}>close</button>
+        <div>I am a modal</div>
+      </Modal>
+    </>
   );
 };
 
