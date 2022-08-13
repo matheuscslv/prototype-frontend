@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { AuthProvider } from './auth';
+import { UnitProvider } from './unit';
+import { FunctionProvider } from './function';
 
 interface IProps {
   children: React.ReactNode;
@@ -8,7 +10,11 @@ interface IProps {
 
 const AppProvider: React.FC<IProps> = ({ children }) => (
   <AuthProvider>
-    {children}
+    <UnitProvider>
+      <FunctionProvider>
+        {children}
+      </FunctionProvider>
+    </UnitProvider>
   </AuthProvider>
 );
 

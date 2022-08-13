@@ -5,16 +5,18 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import Home from '../pages/Home';
+import Unidade from '../pages/Unidade';
+import Funcao from '../pages/Funcao';
 import PageError from '../pages/PageError';
 
 const Routes = () => (
   <Router>
     <Switch>
       <Route exact path="/">
-        <Redirect to="/home" />
+        <Redirect to="/unidade" />
       </Route>
-      <Route exact path="/home" component={Home} />
+      <Route exact path="/unidade" component={Unidade} />
+      <Route exact path="/funcao" component={Funcao} />
       <Route path="*" component={PageError} />
     </Switch>
   </Router>

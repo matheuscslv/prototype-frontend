@@ -3,13 +3,17 @@ import { Form } from '@unform/web';
 
 import * as Yup from 'yup';
 
+import Header from '../../components/Header';
 import Input from '../../components/Input';
+import TableUnidade from '../../components/TableUnidade';
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { useAuth } from '../../hooks/auth';
+import { useUnit } from '../../hooks/unit';
 
-const Login = () => {
-  const { signIn } = useAuth();
+const Home = () => {
+  const {
+    addUnit,
+  } = useUnit();
 
   const formRef = useRef<any>(null);
 
@@ -19,15 +23,15 @@ const Login = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          cpf: Yup.string().required('Campo obrigatório'),
-          password: Yup.string().required('Campo obrigatório').min(6, 'Mínimo de 6 caracteres'),
+          sigla: Yup.string().required('Campo obrigatório').min(2, 'Mínino de 2 caracteres'),
+          nome: Yup.string().required('Campo obrigatório'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        signIn(data);
+        addUnit({ id: Date.now(), ...data });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
@@ -36,37 +40,39 @@ const Login = () => {
         }
       }
     },
-    [signIn],
+    [addUnit],
   );
 
   return (
     <>
-      <Form
-        ref={formRef}
-        onSubmit={handleSubmit}
-      >
-        <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
-          <h1>Autenticação</h1>
+      <Header />
+      <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
+        <Form
+          ref={formRef}
+          onSubmit={handleSubmit}
+        >
           <Input
             format="text"
-            name="cpf"
-            placeholder="CPF"
+            name="sigla"
+            placeholder="Sigla"
             type="text"
-            maxLength={14}
           />
           <Input
             format="text"
-            name="password"
-            placeholder="senha"
-            type="password"
+            name="nome"
+            placeholder="Nome"
+            type="text"
           />
+
           <button>
-            Entrar
+            Adicionar
           </button>
-        </div>
-      </Form>
+        </Form>
+
+        <TableUnidade />
+      </div>
     </>
   );
 };
 
-export default Login;
+export default Home;

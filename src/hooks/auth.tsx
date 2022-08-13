@@ -2,16 +2,16 @@ import React, {
   createContext, useCallback, useState, useContext, useMemo,
 } from 'react';
 
-import api from '../services/api';
-
-interface User {
+interface IUser {
   id: number;
   name: string;
+  cpf: string;
+  password: string;
 }
 
 interface AuthState {
   token: string;
-  user: User;
+  user: IUser;
 }
 
 interface SignInCredentials{
@@ -20,9 +20,8 @@ interface SignInCredentials{
 }
 
 interface AuthContextData {
-  user: User;
+  user: IUser;
   loading: boolean;
-  // eslint-disable-next-line no-unused-vars
   signIn(credentias: SignInCredentials): Promise<void>;
   signOut(): void;
   signed: boolean;
@@ -56,22 +55,24 @@ export const AuthProvider: React.FC<IProps> = ({ children }) => {
     try {
       setLoading(true);
 
-      const response = await api.post(`login`, {
+      const token = Date.now().toString();
+
+      const user = {
+        id: Date.now(),
+        name: new Date().toISOString(),
         cpf,
         password,
-      });
+      };
 
-      const { auth, user } = response.data;
-
-      localStorage.setItem('@project:token', auth.token);
+      localStorage.setItem('@project:token', token);
       localStorage.setItem('@project:user', JSON.stringify(user));
 
-      // @ts-ignore
-      api.defaults.headers.authorization = `Bearer ${auth.token}`;
+      setData({
+        token: Date.now().toString(),
+        user,
+      });
 
-      setData({ token: auth.token, user });
-
-      window.location.href = '/home';
+      window.location.href = '/unidade';
     } catch (error) {
       setLoading(false);
 

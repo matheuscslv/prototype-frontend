@@ -3,13 +3,17 @@ import { Form } from '@unform/web';
 
 import * as Yup from 'yup';
 
+import Header from '../../components/Header';
 import Input from '../../components/Input';
+import TableFuncao from '../../components/TableFuncao';
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { useAuth } from '../../hooks/auth';
+import { useFunction } from '../../hooks/function';
 
-const Login = () => {
-  const { signIn } = useAuth();
+const Funcao = () => {
+  const {
+    addFunction,
+  } = useFunction();
 
   const formRef = useRef<any>(null);
 
@@ -19,15 +23,14 @@ const Login = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          cpf: Yup.string().required('Campo obrigatório'),
-          password: Yup.string().required('Campo obrigatório').min(6, 'Mínimo de 6 caracteres'),
+          nome: Yup.string().required('Campo obrigatório'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        signIn(data);
+        addFunction({ id: Date.now(), ...data, unidades: [] });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);
@@ -36,37 +39,32 @@ const Login = () => {
         }
       }
     },
-    [signIn],
+    [addFunction],
   );
 
   return (
     <>
-      <Form
-        ref={formRef}
-        onSubmit={handleSubmit}
-      >
-        <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
-          <h1>Autenticação</h1>
+      <Header />
+      <div style={{ margin: 'auto', width: '50%', marginTop: '10%' }}>
+        <Form
+          ref={formRef}
+          onSubmit={handleSubmit}
+        >
           <Input
             format="text"
-            name="cpf"
-            placeholder="CPF"
+            name="nome"
+            placeholder="Nome"
             type="text"
-            maxLength={14}
-          />
-          <Input
-            format="text"
-            name="password"
-            placeholder="senha"
-            type="password"
           />
           <button>
-            Entrar
+            Adicionar
           </button>
-        </div>
-      </Form>
+        </Form>
+
+        <TableFuncao />
+      </div>
     </>
   );
 };
 
-export default Login;
+export default Funcao;
