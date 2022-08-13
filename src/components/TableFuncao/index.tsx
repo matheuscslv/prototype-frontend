@@ -44,7 +44,7 @@ const TableFuncao = () => {
         array.push(...selectedUnits.map((item:any) => item));
 
         if (hasDuplicates(array)) {
-          alert('Unidade já tem função');
+          alert('Uma das unidades selecionadas já tem função');
           return;
         }
 
@@ -60,7 +60,7 @@ const TableFuncao = () => {
         }
       }
     },
-    [updateFunction, isFunctionUpdate, selectedUnits],
+    [updateFunction, functions, isFunctionUpdate, selectedUnits],
   );
 
   return (

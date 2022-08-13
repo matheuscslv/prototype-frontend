@@ -13,6 +13,10 @@ const Table = () => {
     units, deleteUnit, updateUnit,
   } = useUnit();
 
+  React.useEffect(() => {
+    console.log(units);
+  }, [units]);
+
   const { functions } = useFunction();
 
   const formRef = useRef<any>(null);

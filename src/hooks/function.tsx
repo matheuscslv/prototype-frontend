@@ -2,6 +2,8 @@ import React, {
   createContext, useCallback, useState, useContext,
 } from 'react';
 
+import { useUnit } from './unit';
+
 interface IFunction {
   id: number;
   nome: string;
@@ -24,13 +26,16 @@ const UnitContext = createContext<FunctionContextData>({} as FunctionContextData
 export const FunctionProvider: React.FC<IProps> = ({ children }) => {
   const [functions, setFunctions] = useState<IFunction[]>([]);
 
+  const { units, updateUnit } = useUnit();
+
   const addFunction = useCallback((func: IFunction) => {
     setFunctions([...functions, func]);
   }, [functions]);
 
   const updateFunction = useCallback((func: IFunction) => {
+    units.forEach((item) => (func.unidades.includes(item.nome) ? updateUnit({ ...item, funcao: func.nome }) : item));
     setFunctions(functions.map((item) => (item.id === func.id ? func : item)));
-  }, [functions]);
+  }, [functions, units, updateUnit]);
 
   const deleteFunction = useCallback((id: number) => {
     setFunctions(functions.filter((item) => item.id !== id));
