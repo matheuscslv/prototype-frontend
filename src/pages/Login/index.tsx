@@ -1,6 +1,9 @@
 import React, { useRef, useCallback, useState } from 'react';
 import { Form } from '@unform/web';
 
+import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
+import DatePicker, { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
+
 import {
   FormGroup, Button, Table,
 } from 'reactstrap';
@@ -47,6 +50,13 @@ const Login = () => {
 
   const [units, setUnits] = useState<IUnit[]>([]);
 
+  const [selectedDayRange, setSelectedDayRange] = useState({
+    from: null,
+    to: null,
+  });
+
+  const [selectedDay, setSelectedDay] = useState(null);
+
   const handleSubmit = useCallback(
     async (data: any) => {
       try {
@@ -73,8 +83,31 @@ const Login = () => {
     [units],
   );
 
+  React.useEffect(() => {
+    console.log(selectedDayRange);
+  }, [selectedDayRange]);
+
+  React.useEffect(() => {
+    console.log(selectedDay);
+  }, [selectedDay]);
+
   return (
     <>
+      <Calendar
+        value={selectedDayRange}
+        // @ts-ignore
+        onChange={setSelectedDayRange}
+        shouldHighlightWeekends
+      />
+
+      <DatePicker
+        value={selectedDay}
+        // @ts-ignore
+        onChange={setSelectedDay}
+        inputPlaceholder="Select a day"
+        shouldHighlightWeekends
+      />
+
       <Form
         ref={formRef}
         onSubmit={handleSubmit}
