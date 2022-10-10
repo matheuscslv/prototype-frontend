@@ -34,6 +34,7 @@
     "react/require-default-props": "off",
     "jsx-a11y/alt-text": "off",
     "camelcase": "off",
+    "jsx-a11y/control-has-associated-label": "off",
     "consistent-return": "warn",
     "no-param-reassign": "off",
     "no-use-before-define": "off",

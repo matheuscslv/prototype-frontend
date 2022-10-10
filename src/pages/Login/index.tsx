@@ -38,6 +38,10 @@ const customStyles = {
 const Login = () => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
+  const [ErrorValor, setErrorValor] = useState("");
+  const [valor, setValor] = useState(0);
+  const [modelos, setModelos] = useState<any>([]);
+
   function openModal() {
     setIsOpen(true);
   }
@@ -91,6 +95,18 @@ const Login = () => {
     console.log(selectedDay);
   }, [selectedDay]);
 
+  React.useEffect(() => {
+    const aux = modelos.reduce(
+      (previousValue: any, currentValue: any) => previousValue + Number(currentValue.valor),
+      0,
+    );
+    if (aux > valor) {
+      setErrorValor('ultrapassou valor');
+    } else {
+      setErrorValor("");
+    }
+  }, [modelos]);
+
   return (
     <>
       <Calendar
@@ -107,6 +123,57 @@ const Login = () => {
         inputPlaceholder="Select a day"
         shouldHighlightWeekends
       />
+
+      <div style={{ marginTop: 150 }}>
+        <input
+          type="text"
+          onChange={(e) => setValor(Number(e.target.value))}
+        />
+        {ErrorValor && <span>{ErrorValor}</span>}
+        <br />
+        {modelos.map((item: any) => (
+          <>
+            <input
+              type="number"
+              value={item.valor}
+              onChange={(e) => {
+                setModelos(modelos.map((subitem: any) => (subitem.id == item.id ? ({ ...subitem, valor: Number(e.target.value) }) : subitem)));
+              }}
+            />
+            <br />
+          </>
+
+        ))}
+
+        <button
+          type="button"
+          onClick={() => {
+            setModelos([...modelos, {
+              id: Date.now(),
+              valor: 0,
+            }]);
+          }}
+        >
+          Adicionar
+
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            const aux = modelos.reduce(
+              (previousValue: any, currentValue: any) => previousValue + Number(currentValue.valor),
+              0,
+            );
+            if (aux > valor) {
+              alert("Valores estão ultrapassando, verifique antes de submeter");
+            }
+          }}
+        >
+          Submeter
+        </button>
+
+      </div>
 
       <Form
         ref={formRef}
